@@ -1,5 +1,8 @@
 package il.ac.tau.cs.software1.bigram;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -70,6 +73,21 @@ public class BigramModel {
         return ELEMENT_NOT_FOUND;
     }
 
+    
+    private static int findIndexInPrefix(String[] vocabulary, int size, String word) {
+        if (word == null) {
+            return ELEMENT_NOT_FOUND;
+        }
+        for (int i = 0; i < size; i++) {
+            if (word.equals(vocabulary[i])) {
+                return i;
+            }
+        }
+
+        return ELEMENT_NOT_FOUND;
+
+    }
+    
     ///////////////////////////////////////////////////////////////////////////
     // Questions 1 - 5: implement these
     ///////////////////////////////////////////////////////////////////////////
@@ -79,8 +97,31 @@ public class BigramModel {
      * @post: mBigramCounts = prev(mBigramCounts)
      */
     public String[] buildVocabularyIndex(String fileName) throws IOException { // Question 1
-        // TODO: implement
-        return null;
+        File fromFile = new File(fileName);
+        BufferedReader reader = new BufferedReader(new FileReader(fromFile));
+        
+        String[] tempVocabulary = new String[MAX_VOCABULARY_SIZE];
+        int wordCounter = 0;
+        
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] tokens = line.trim().split("\\s+");
+            for (int i = 0; i < tokens.length; i++) {
+                String word = normalizeWord(tokens[i]);
+                if ((word != null) && (wordCounter < MAX_VOCABULARY_SIZE) && (findIndexInPrefix(tempVocabulary, wordCounter, word) == ELEMENT_NOT_FOUND)) {
+                    tempVocabulary[wordCounter] = word;
+                    wordCounter++;
+                }
+
+            }
+        }
+        reader.close();
+        String[] vocabulary = new String[wordCounter];
+        for (int i = 0; i < wordCounter; i++){
+            vocabulary[i] = tempVocabulary[i];
+        }
+        
+        return vocabulary;
     }
 
     /*
