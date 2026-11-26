@@ -222,8 +222,16 @@ public class BigramModel {
      * @post: if sentence is probable, according to the model, $ret = true, else, $ret = false
      */
     public boolean isLegalSentence(String sentence) { // Question 5
-        // TODO: implement
-        return false;
+        if (sentence.length() == 0) {return true;}
+        String[] words = sentence.split(" ");
+        if (words.length == 1) {
+            return findIndex(mVocabulary, words[0]) != ELEMENT_NOT_FOUND;
+        }
+        for (int i = 0; i < words.length - 1; i++) {
+            int count = getBigramCount(words[i], words[i + 1]);
+            if (count == 0) {return false;}
+        }
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////
